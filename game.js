@@ -10,29 +10,77 @@ kaboom({
 
 loadAssets();
 
-let animals = ["ant","bee","beetle","butterfly","caterpillar","dragonfly","firefly","grasshopper","ladybug","stickbug"]
+let animals = ["ant","bee","beetle","butterfly","caterpillar","dragonfly","firefly","grasshopper","ladybug","stickbug","ant","bee","beetle","butterfly","caterpillar","dragonfly","firefly","grasshopper","ladybug","stickbug"]
+let counter = 0;
+let finCounter = Math.trunc(animals.length/2);
+
+const xOffset = ((width()/2) - 300);
+const yOffset = ((height()/2) - 200);
+const xSize = 150;
+const ySize = 130;
+
+let selectOne = null;
+let selectTwo = null;
+
+function getAnimalName(a) {
+  let name = "";
+
+  animals.forEach((animal) => {
+    if (a.is(animal)) name = animal;
+  });
+
+  return name;
+}
+
+function closeTiles() {
+  if (!(selectOne===null) && !(selectTwo===null)) {
+    selectOne.use(sprite("back"));
+    selectTwo.use(sprite("back"));
+  }
+}
 
 scene("main", (args = {}) => {
-  const centerX = ((width()/2));
-  const centerY = ((height()/2));
+  let tiles = [];
+  let gameArray = [...animals];
+  let count = 0;
 
-  const offsetX = 0;
-  const offsetY = 0;
+  helper.shuffleArray(gameArray);
 
-  let anim = animals[helper.getRandomInt(animals.length)]
 
-  let card = add ([
-    sprite("back"),
-    pos(centerX,centerY),
-    scale(0.25),
-    origin("center")
-  ]);
+  for (let j=0; j<5; j++) {
+    for (let i=0; i<4; i++) {      
+      let anim = add ([
+        sprite("back"),
+        pos((j*xSize)+xOffset,(i*ySize)+yOffset),
+        scale(0.25),
+        origin("center"),
+        area(),
+        gameArray[count],
+        "tile"
+      ]);
+      tiles.push(anim);
+      count++;
+    }
+  }
 
-  card.onClick(() => {
-    card.use(
-      sprite("ant")
-    );
-  });
+  onClick("tile", (t) => {
+    let name = sprite(getAnimalName(t));
+    t.use(name);
+
+    if (selectOne===null) {
+      selectOne = t;
+    } else if (selectTwo===null) {
+      selectTwo = t;
+    }
+
+    if (!(selectOne===null) && !(selectTwo===null)) {
+      wait(1, () => {
+        closeTiles();
+        selectOne = null;
+        selectTwo = null;
+      });
+    }
+  })
 });
 
 go("main");
