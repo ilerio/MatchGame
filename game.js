@@ -43,6 +43,7 @@ scene("main", (args = {}) => {
   let tiles = [];
   let gameArray = [...animals];
   let count = 0;
+  let isClickable = true;
 
   helper.shuffleArray(gameArray);
 
@@ -65,19 +66,27 @@ scene("main", (args = {}) => {
 
   onClick("tile", (t) => {
     let name = sprite(getAnimalName(t));
-    t.use(name);
+
+    selectOne===null ? console.log("null") : console.log(selectOne._id);
+    selectTwo===null ? console.log("null") : console.log(selectTwo._id);
+
+    if (isClickable) {
+      t.use(name);
+    }
 
     if (selectOne===null) {
       selectOne = t;
-    } else if (selectTwo===null) {
+    } else if (selectTwo===null && t != selectOne) {
       selectTwo = t;
+      isClickable = false;
     }
 
-    if (!(selectOne===null) && !(selectTwo===null)) {
+    if (!isClickable) {
       wait(1, () => {
         closeTiles();
         selectOne = null;
         selectTwo = null;
+        isClickable = true;
       });
     }
   })
