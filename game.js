@@ -1,5 +1,5 @@
-import kaboom from "https://unpkg.com/kaboom/dist/kaboom.mjs";
-//import kaboom from "https://unpkg.com/kaboom@2000.2.9/dist/kaboom.mjs"
+//import kaboom from "https://unpkg.com/kaboom/dist/kaboom.mjs";
+import kaboom from "https://unpkg.com/kaboom@2000.2.9/dist/kaboom.mjs"
 import {loadAssets} from "./load.js"
 import * as helper from "./helper.js"
 
@@ -10,7 +10,7 @@ kaboom({
 
 loadAssets();
 
-let animals = ["ant","bee","beetle","butterfly","caterpillar","dragonfly","firefly","grasshopper","ladybug","stickbug","ant","bee","beetle","butterfly","caterpillar","dragonfly","firefly","grasshopper","ladybug","stickbug"]
+let animals = ["ant","bee","beetle","butterfly","caterpillar","dragonfly","firefly","grasshopper","ladybug","stickbug","ant","bee","beetle","butterfly","caterpillar","dragonfly","firefly","grasshopper","ladybug","stickbug"];
 let counter = 0;
 let finCounter = Math.trunc(animals.length/2);
 
@@ -43,7 +43,7 @@ scene("main", (args = {}) => {
   let tiles = [];
   let gameArray = [...animals];
   let count = 0;
-  let isClickable = true;
+  let canSelect = true;
 
   helper.shuffleArray(gameArray);
 
@@ -66,28 +66,33 @@ scene("main", (args = {}) => {
 
   onClick("tile", (t) => {
     let name = sprite(getAnimalName(t));
+    console.log("clicked Animal Name = " + getAnimalName(t));
 
-    selectOne===null ? console.log("null") : console.log(selectOne._id);
-    selectTwo===null ? console.log("null") : console.log(selectTwo._id);
-
-    if (isClickable) {
+    if (canSelect) {
       t.use(name);
     }
 
     if (selectOne===null) {
       selectOne = t;
-    } else if (selectTwo===null && t != selectOne) {
+    } else if (selectTwo===null && t !== selectOne) {
       selectTwo = t;
-      isClickable = false;
+      canSelect = false;
     }
 
-    if (!isClickable) {
+    selectOne===null ? console.log("null") : console.log("selectOne._id = " + selectOne._id);
+    selectTwo===null ? console.log("null") : console.log("selectTwo._id = " + selectTwo._id);
+
+    if (!canSelect && !((getAnimalName(selectOne) === getAnimalName(selectTwo)))) {
       wait(1, () => {
         closeTiles();
         selectOne = null;
         selectTwo = null;
-        isClickable = true;
+        canSelect = true;
       });
+    } else if(!canSelect) {
+      selectOne = null;
+      selectTwo = null;
+      canSelect = true;
     }
   })
 });
